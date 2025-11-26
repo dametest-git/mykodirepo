@@ -1,6 +1,0 @@
-{
-  "functions": {
-    "app/api/**/*": { "maxDuration": 10 }
-  },
-  "directoryListing": true
-}
