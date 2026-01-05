@@ -1,28 +1,19 @@
 <?php
-// index.php - lists all .zip files in the current directory
-header('Content-Type: text/html; charset=utf-8');
+// Print only the DOCTYPE and one anchor per .zip file (no extra HTML structure)
+echo "<!DOCTYPE html>\n";
 
-// Print DOCTYPE exactly as requested
-echo '<!DOCTYPE html>';
-
-// Collect .zip files (case-insensitive)
-$files = [];
-foreach (new DirectoryIterator(__DIR__) as $file) {
-    if ($file->isFile()) {
-        $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-        if ($ext === 'zip') {
-            $files[] = $file->getFilename();
-        }
-    }
+$files = glob("*.zip");
+if ($files === false) {
+    // nothing to list (or glob error) — still only DOCTYPE will have been printed
+    exit;
 }
 
-// Sort naturally, case-insensitive
-if ($files) {
-    usort($files, 'strnatcasecmp');
-    foreach ($files as $name) {
-        // href should be URL-encoded, display escaped
-        $href = rawurlencode($name);
-        $display = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        echo '<a href="' . $href . '">' . $display . '</a><BR>';
-    }
+// natural case-insensitive sort
+natcasesort($files);
+
+// output one link per file in the exact format requested
+foreach ($files as $file) {
+    $escaped = htmlspecialchars($file, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    echo '<a href="' . $escaped . '">' . $escaped . '</a><BR>' . "\n";
 }
+?>
